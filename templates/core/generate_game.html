@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Générer un jeu - GameForge{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>Générer un nouveau jeu</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="gameForm">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary" id="generateBtn">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="loadingSpinner"></span>
+                            Générer le jeu
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.getElementById('gameForm').addEventListener('submit', function(e) {
+    const generateBtn = document.getElementById('generateBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    
+    generateBtn.disabled = true;
+    loadingSpinner.classList.remove('d-none');
+    generateBtn.innerHTML = 'Génération en cours...';
+});
+</script>
+{% endblock %}
+{% endblock %} 

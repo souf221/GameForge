@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Profil - {{ user.username }} - GameForge{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="rounded-circle img-fluid mb-3" style="max-width: 150px;">
+                {% else %}
+                    <img src="https://via.placeholder.com/150" alt="Avatar par défaut" class="rounded-circle img-fluid mb-3">
+                {% endif %}
+                <h3>{{ user.username }}</h3>
+                <p class="text-muted">{{ user.email }}</p>
+                {% if user.profile.bio %}
+                    <p>{{ user.profile.bio }}</p>
+                {% endif %}
+                <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">Modifier le profil</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>Mes jeux</h4>
+            </div>
+            <div class="card-body">
+                {% if user_games %}
+                    <div class="row">
+                        {% for game in user_games %}
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    {% if game.concept_art %}
+                                        <img src="{{ game.concept_art.url }}" class="card-img-top" alt="{{ game.title }}">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ game.title }}</h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">Genre: {{ game.get_genre_display }}</small><br>
+                                            <small class="text-muted">Ambiance: {{ game.get_ambiance_display }}</small>
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <a href="{% url 'games:game_detail' game.id %}" class="btn btn-sm btn-outline-primary">Voir détails</a>
+                                            <form method="POST" action="{% url 'games:toggle_public' game.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm {% if game.is_public %}btn-success{% else %}btn-secondary{% endif %}">
+                                                    {% if game.is_public %}Public{% else %}Privé{% endif %}
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center">Vous n'avez pas encore créé de jeux.</p>
+                    <div class="text-center">
+                        <a href="{% url 'core:generate_game' %}" class="btn btn-primary">Créer un jeu</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
